@@ -96,6 +96,8 @@ line:
 #### Build x with cmake
 
 
+> If you don't have cmake: `brew install cmake`.
+
 Create a `CMakeLists.txt`:
 
 ```
@@ -154,8 +156,8 @@ are relocatable
 In Xcode locate the **"Embed Frameworks"** build phase. Press the **+**
 button, then choose **"Add Other..."**. Then navigate to `../addictions/Frameworks`
 and add the framework.
-3. Build and it should work. Test relocatability by copying the App to your
-Desktop and starting from there.
+3. Build and it should work. Test the relocatability of your app by copying it to the
+Desktop and starting it from there.
 
 
 #### Embed homebrewed shared libraries in Xcode
@@ -173,8 +175,8 @@ choice between `libz.dylib`, `libz.1.dylib`, `libz.1.2.11.dylib` choose
 `libz.1.2.11.dylib`.
 3. The library should now appear in the "Project navigator". Drag it into
 the **"Copy Bundle Resources"** build phase of your app.
-4. Build and it should work. Test the relocatability of your app by copying it to your
-Desktop and starting the app from there.
+4. Add the header directory `addictions/include` to the **Header Search Paths"** " (`HEADER_SEARCH_PATHS`) build setting of your project or target. As an alternative you can run `mulle-brew xcode -a` to do this step for you.
+4. Build the app and it should work. Test the relocatability of your app by copying it to your Desktop and starting it from there.
 
 
 ### Example: MulleBrewApp
@@ -195,7 +197,7 @@ mulle-brew install -r
 The App is a stock Xcode app for Objective-C without any specialties added.
 
 Only `AppDelegate.m` and `MainMenu.nib` have been modified to retrieve zlib and
-python version strings and place them into `NSTextField`s:
+python version strings and place them into `NSTextFields`:
 
 ![Screeny](dox/screeny2.png)
 
@@ -229,6 +231,11 @@ Then the library and framework have been added as explained above:
 
 ![Screeny](dox/screeny.png)
 
+And last but not least the search paths for the headers were set. Note that Xcode does updates the **"Framework Search Paths"** for you automatically.
+
+![Screeny](dox/screeny3.png)
+
+
 And it just worked.
 
 
@@ -261,7 +268,6 @@ mulle-brew run open Foo.xcodeproj
 ```
 
 
-
 ### Sharing addictions with other projects
 
 You might find that you have multiple projects with overlapping dependencies on
@@ -280,6 +286,20 @@ mulle-brew emancipate
 
 Here the use of `mulle-brew paths` comes in handy, as it adapts to the
 new position of the `addictions` folder in the filesystem.
+
+
+### Use paths without spaces for your projects
+
+As this simplifies things a lot. If your home directory is "My Home" though,
+you should note that you can give quoting options to `mulle-brew paths`.
+
+To properly use quoted paths you will then need to use `eval`
+to run commands:
+
+```
+CFLAGS="`mulle-brew paths -1 -q "'" cflags`"
+mulle-bootstrao run eval cc ${CFLAGS} x.c
+```
 
 
 

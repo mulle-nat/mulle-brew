@@ -67,35 +67,23 @@ resolve_symlinks()
 }
 
 
-_canonicalize_dir_path()
-{
-   (
-      cd "$1" 2>/dev/null &&
-      pwd -P
-   ) || exit 1
-}
-
-
-_canonicalize_file_path()
-{
-    local dir file
-
-    dir="`dirname "$1"`"
-    file="`basename -- "$1"`"
-    (
-      cd "${dir}" 2>/dev/null &&
-      echo "`pwd -P`/${file}"
-    ) || exit 1
-}
-
-
 canonicalize_path()
 {
    if [ -d "$1" ]
    then
-      _canonicalize_dir_path "$1"
+   (
+      cd "$1" 2>/dev/null && pwd -P
+   )
    else
-      _canonicalize_file_path "$1"
+      local dir
+      local file
+
+      dir="`dirname "$1"`"
+      file="`basename -- "$1"`"
+      (
+         cd "${dir}" 2>/dev/null &&
+         echo "`pwd -P`/${file}"
+      )
    fi
 }
 

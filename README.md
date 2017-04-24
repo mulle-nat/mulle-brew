@@ -13,6 +13,7 @@ By default homebrew installs packages system-wide into `/usr/local/` (on OS X). 
 * Updating brew libraries for one project, doesn't necessarily impact parallel projects
 * An easy way to share the required build environments
 * A uniform way to access those dependencies via a known folder name `addictions`
+* Makes homebrew dylibs and frameworks embeddable
 
 
 ## Installing **mulle-brew**

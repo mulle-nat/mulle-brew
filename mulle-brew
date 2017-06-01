@@ -30,8 +30,8 @@
 #   POSSIBILITY OF SUCH DAMAGE.
 #
 MULLE_EXECUTABLE_VERSION_MAJOR=3
-MULLE_EXECUTABLE_VERSION_MINOR=5
-MULLE_EXECUTABLE_VERSION_PATCH=2
+MULLE_EXECUTABLE_VERSION_MINOR=6
+MULLE_EXECUTABLE_VERSION_PATCH=1
 
 MULLE_EXECUTABLE_VERSION="${MULLE_EXECUTABLE_VERSION_MAJOR}.${MULLE_EXECUTABLE_VERSION_MINOR}.${MULLE_EXECUTABLE_VERSION_PATCH}"
 
@@ -194,6 +194,32 @@ bootstrap_init()
 }
 
 
+bootstrap_cd_projectpath()
+{
+   local  orgpwd
+
+   orgpwd="$PWD"
+
+   while ! is_bootstrap_project
+   do
+      local old
+
+      old="$PWD"
+      cd ..
+
+      if [ "$PWD" = "${old}" ]
+      then
+         if [ "${command}" = "seting" ]
+         then
+            cd "${orgpwd}"
+         else
+            return 1
+         fi
+      fi
+   done
+}
+
+
 brew_main()
 {
    local command
@@ -268,23 +294,20 @@ brew_main()
       help|init|uname)
       ;;
 
+      project-path)
+         if ! bootstrap_cd_projectpath
+         then
+            exit 1
+         fi
+         echo "`pwd -P`"
+         exit 0
+      ;;
+
       *)
-         local  orgpwd
-
-         orgpwd="$PWD"
-
-         while ! is_bootstrap_project
-         do
-            local old
-
-            old="$PWD"
-            cd ..
-
-            if [ "$PWD" = "${old}" ]
-            then
-               fail "There is no ${BOOTSTRAP_DIR} or ${BOOTSTRAP_DIR}.local folder here ($orgpwd), can't continue"
-            fi
-         done
+         if ! bootstrap_cd_projectpath
+         then
+            fail "There is no ${BOOTSTRAP_DIR} or ${BOOTSTRAP_DIR}.local folder here ($orgpwd), can't continue"
+         fi
       ;;
    esac
 
